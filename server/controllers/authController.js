@@ -50,7 +50,7 @@ exports.login=async(req,res)=>{
       return res.status(401).json({status:"fail",message:"Incorrect password"})
 
     const token = jwt.sign({id:user[0].user_id},"SECERT")
-    console.log(token);
+    
     
     const {password, ...other} = user[0];
     res.cookie("access_token", token,{

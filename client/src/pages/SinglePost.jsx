@@ -1,42 +1,61 @@
-import React from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import Menu from '../components/Menu';
 import Edit from '../imges/edit.png'
 import Delete from '../imges/delete.png'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
+import axios from 'axios'
+import moment from 'moment'
+import {AuthContext} from '../context/AuthContext'
+import {baseUrl} from '../utils/service'
 
 const SinglePost = () => {
+
+  const {currentUser} = useContext(AuthContext);
+  console.log(currentUser );
+  const [post, setPost] = useState({});
+
+  const location = useLocation();
+
+  const post_id = location.pathname.split('/')[2];
+  
+
+  useEffect(()=>{
+    const getPost = async()=>{
+      try{
+        const res = await axios.get(`${baseUrl}/posts/${post_id}`);
+        setPost(res.data.post)
+        console.log(res.data.post)
+  
+      }catch(err){
+        console.log(err);
+      }
+    }
+    getPost();
+  },[post_id])
+
   return (
     <div className='single'>
       <div className="content">
-        <img src='https://images.pexels.com/photos/6157049/pexels-photo-6157049.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=2'/>
+        <img src={post.img}/>
       
         <div className="user">
-          <img src='https://images.pexels.com/photos/17356078/pexels-photo-17356078/free-photo-of-profile-studio-shoot-of-a-man-posing-against-orange-brown-background.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'/>
+          <img src={currentUser.img}/>
           <div className="info">
             <span>Sayed</span>
-            <p>Posted 2 days ago</p>
+            <p>Posted {moment(post.created_at).fromNow()}</p>
           </div>
+          {currentUser.user_id==post.user_id
+          &&
           <div className="edit">
             <Link to={'/write?edit=2'}>
               <img src={Edit}/>
             </Link>
             <img src={Delete}/>
           </div>
+        }
         </div>
-        <h1>Lorem ipsum dolor sit amet consectetur adipisicing elit.</h1>
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus obcaecati deserunt beatae quas ut doloremque ex quo qui corrupti pariatur, quos perspiciatis ipsa in dolore earum quisquam saepe, hic blanditiis!Lorem
-        </p>
-        <br/>
-        <p>
-
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Modi fugiat vero suscipit, officiis, molestiae reiciendis maiores aperiam veniam asperiores eos, eligendi voluptate totam voluptatem. Ad accusamus quis architecto voluptas omnis?
-        </p>
-        <br/>  
-        <p>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae nam quasi rem reprehenderit? Eveniet dolorum expedita libero? Quia consectetur quae voluptas quo repellendus et optio atque laborum! Quas, aut vero.  
-          <br/>
-        </p>
+        <h1>{post.title}</h1>
+        {post.content}
       </div>
       <Menu/>
     </div>

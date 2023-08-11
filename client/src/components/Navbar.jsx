@@ -9,7 +9,9 @@ const Navbar = () => {
     <div className='navbar'>
       <div className="container">
         <div className="logo">
-          <img src={logo} className='logo' />
+          <Link to="/">
+            <img src={logo} className='logo' />
+          </Link>
         </div>
         <div className="links">
           <Link className='link' to='/?cat=art'>
@@ -30,7 +32,7 @@ const Navbar = () => {
           <Link className='link' to='/?cat=food'>
             <h6>FOOD</h6>
           </Link>
-          <span>{currentUser?.user.username}</span>
+          <span>{currentUser?.username}</span>
          {currentUser? <span onClick={logout}>logout</span> : <Link to="/login">Login</Link>}
           <span className='write'>
             <Link className='link' to='/write'>Write</Link>
