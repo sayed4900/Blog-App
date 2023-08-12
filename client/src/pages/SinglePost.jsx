@@ -25,7 +25,7 @@ const SinglePost = () => {
         const res = await axios.get(`${baseUrl}/posts/${post_id}`);
         setPost(res.data.post)
         console.log(res.data.post)
-  
+        
       }catch(err){
         console.log(err);
       }
@@ -36,15 +36,15 @@ const SinglePost = () => {
   return (
     <div className='single'>
       <div className="content">
-        <img src={post.img}/>
+        <img src={post?.img}/>
       
         <div className="user">
-          <img src={currentUser.img}/>
+          <img src={post.user_img}/>
           <div className="info">
-            <span>Sayed</span>
-            <p>Posted {moment(post.created_at).fromNow()}</p>
+            <span>{post.username}</span>
+            <p>Posted {moment(post?.post_created_at).fromNow()}</p>
           </div>
-          {currentUser.user_id==post.user_id
+          {currentUser.user_id==post?.user_id
           &&
           <div className="edit">
             <Link to={'/write?edit=2'}>
@@ -54,8 +54,8 @@ const SinglePost = () => {
           </div>
         }
         </div>
-        <h1>{post.title}</h1>
-        {post.content}
+        <h1>{post?.title}</h1>
+        {post?.content}
       </div>
       <Menu/>
     </div>

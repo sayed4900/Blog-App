@@ -18,7 +18,8 @@ exports.addPost = async(req,res)=>{
 exports.getPost = async(req,res)=>{
   try{
 
-    const q = "SELECT * FROM posts where post_id = ?";
+    const q = "SELECT u.user_id, u.username , u.img AS user_img, p.img, p.post_id, p.title, p.content, p.cat, p.created_at AS post_created_at, p.updated_at AS post_updated_at FROM posts AS p JOIN users AS u ON p.user_id = u.user_id WHERE p.post_id = ?";
+
     const [post] = await pool.execute(q,[req.params.id]);
     
     res.status(201).json({status:"success",post:post[0]});
@@ -58,7 +59,9 @@ exports.getAllPosts = async(req,res)=>{
 
 exports.deletePost=async(req,res)=>{
   try{
-    res.status(200).json("Con")
+    const q = "DELETE FROM posts where post_id = ?" ;
+    await pool.execute(q,[req.params.id]);
+    res.status(200).json({status:"success"})
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)

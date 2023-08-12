@@ -4,6 +4,7 @@ const jwt = require('jsonwebtoken');
 
 
 exports.register = async(req,res)=>{
+  const d_img="https://www.appexpertin.com/wp-content/uploads/2020/06/main-banner-img.jpg";
   try{
     // CHECK exist user
     const q = "SELECT * FROM users WHERE email = ? OR username = ?"
@@ -17,7 +18,7 @@ exports.register = async(req,res)=>{
     const hash = await bcrypt.hash(req.body.password,salt);
 
     const q2 = "INSERT INTO users(`username`,`email`, `password`, `img`) VALUES (?, ?, ?, ?)";
-    const values = [req.body.username, req.body.email, hash, "default_img"] ;
+    const values = [req.body.username, req.body.email, hash,d_img ] ;
 
     await pool.execute(q2, values);
 
