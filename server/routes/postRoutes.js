@@ -6,7 +6,7 @@ router.get("/", postConroller.getAllPosts);
 router.get("/:id",postConroller.getPost);
 router.post('/add-post',postConroller.addPost);
 router.delete('/:id',postConroller.deletePost)
-// router.put('/:id',postConroller.updatePost)
+router.put('/:id',postConroller.updatePost)
 
 
 

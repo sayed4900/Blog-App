@@ -1,4 +1,6 @@
+const  jwt  = require('jsonwebtoken');
 const pool = require('../utils/db.js');
+const {promisify} = require('util')
 
 exports.addPost = async(req,res)=>{
   try{
@@ -21,8 +23,9 @@ exports.getPost = async(req,res)=>{
     const q = "SELECT u.user_id, u.username , u.img AS user_img, p.img, p.post_id, p.title, p.content, p.cat, p.created_at AS post_created_at, p.updated_at AS post_updated_at FROM posts AS p JOIN users AS u ON p.user_id = u.user_id WHERE p.post_id = ?";
 
     const [post] = await pool.execute(q,[req.params.id]);
-    
-    res.status(201).json({status:"success",post:post[0]});
+    if (!post.length)
+      return res.status(200).json({status:"fail",message:"this post is deleted"})
+    res.status(200).json({status:"success",post:post[0]});
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)
@@ -58,10 +61,22 @@ exports.getAllPosts = async(req,res)=>{
 }
 
 exports.deletePost=async(req,res)=>{
-  try{
-    const q = "DELETE FROM posts where post_id = ?" ;
-    await pool.execute(q,[req.params.id]);
-    res.status(200).json({status:"success"})
+  try{ 
+    
+    const token = req.cookies?.access_token;
+    // console.log(`token➡️ ${token}`);
+    if (!token)
+      return res.status(401).json({status:"fail", message:"Not Authentcaited"});
+    
+    const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
+    console.log(userInfo.id);
+    
+    const q = "DELETE FROM posts where post_id = ? AND user_id = ?" ;
+    const result = await pool.execute(q,[req.params.id,userInfo.id]);
+  
+    if (!result[0].affectedRows)
+      return res.status(404).json({status:"fail",message:"Your are't the owner of the post!"})
+    res.status(200).json({status:"success",message:"Post Deleted",result})
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)
