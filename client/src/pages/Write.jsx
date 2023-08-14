@@ -4,17 +4,22 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axois from 'axios'
 import { baseUrl } from '../utils/service';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 const Write = () => {
-  const [value, setValue] = useState('');
-  const [title, setTitle] = useState("");
+  const state = useLocation().state
+  
+  const [value, setValue] = useState(state?.content||"");
+  const [title, setTitle] = useState(state?.title||"");
   const [file, setFile] = useState(null)
-  const [cat, setCat] = useState("")
+  const [cat, setCat] = useState(state?.cat||"")
 
   const upload = async()=>{
     try{
       const formData = new FormData();
       formData.append("file",file) ; 
-      const res = await axois.post(`${baseUrl}/posts/upload`);
+      const res = await axois.post(`${baseUrl}/posts/upload`,formData);
+      console.log(res)
       return res.data.filename;
     }catch(err){
       console.log(err)
@@ -23,10 +28,16 @@ const Write = () => {
 
   const handleSubmit = async(e)=>{
     e.preventDefault();
-    const imgUrl = upload();
-
+    const imgUrl = await upload();
+    console.log(imgUrl)
     try{
-
+      // if (state){
+      //   const res = await axois.put(`${baseUrl}/posts/upload/${state.post_id}`,{title,content:value,cat,img: file ? imgUrl:""})
+      //   console.log(res.data);
+      // }else{
+        const res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat, img:imgUrl})
+        console.log(res.data);
+      // }
     }catch(err){
       console.log(err)
     }
@@ -36,7 +47,7 @@ const Write = () => {
   return (
     <div className='write-post'>
       <div className="content">
-        <input type='text' placeholder='Title' onChange={e=>setTitle(e.target.value)}/>
+        <input type='text' placeholder='Title'value={title} onChange={e=>setTitle(e.target.value)}/>
         <div className="editor-container">
           <ReactQuill  className='editor' theme="snow" value={value} onChange={setValue} />
         </div>
@@ -61,31 +72,33 @@ const Write = () => {
         <div className='item'>
           <h1>Category</h1>
           <div className="cat">
-            <input type="radio" name="cat" value="art" id="art" />
+            <input type="radio" checked={cat==="art"}  name="cat" value="art" id="art"
+              onChange={e=>setCat(e.target.value)}
+            />
             <label htmlFor="art" >Art</label>
           </div>
           <div className="cat">
-            <input type="radio" name="cat" value="science" id="science" onChange={e=>setCat(e.target.value)} />
+            <input type="radio" checked={cat==="science"}  name="cat" value="science" id="science" onChange={e=>setCat(e.target.value)} />
             <label htmlFor="science">Science</label>
           </div>
 
           <div className="cat">
-            <input type="radio" name="cat" value="technology" id="technology" onChange={e=>setCat(e.target.value)} />
+            <input type="radio" checked={cat==="technology"}  name="cat" value="technology" id="technology" onChange={e=>setCat(e.target.value)} />
             <label htmlFor="technology">Technology</label>
           </div>
 
           <div className="cat">
-            <input type="radio" name="cat" value="cinema" id="cinema" onChange={e=>setCat(e.target.value)} />
+            <input type="radio" checked={cat==="cinema"}  name="cat" value="cinema" id="cinema" onChange={e=>setCat(e.target.value)} />
             <label htmlFor="cinema">Cinema</label>
           </div>
 
           <div className="cat">
-            <input type="radio" name="cat" value="desing" id="desing" onChange={e=>setCat(e.target.value)} />
+            <input type="radio" checked={cat==="desing"}  name="cat" value="desing" id="desing" onChange={e=>setCat(e.target.value)} />
             <label htmlFor="desing">Desing</label>
           </div>
 
           <div className="cat">
-            <input type="radio" name="cat" value="food" id="food" onChange={e=>setCat(e.target.value)} />
+            <input type="radio" checked={cat==="food"}  name="cat" value="food" id="food" onChange={e=>setCat(e.target.value)} />
             <label htmlFor="food">Food</label>
           </div>
           

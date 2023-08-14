@@ -43,7 +43,7 @@ const Menu = ({cat }) => {
 //   },
 // ];
   return ( 
-    <div className="menu">
+    <div className="menu" > 
       <h1>Other posts you may like</h1>
       {posts.map((post, i) => {
         if (i >= 4) {
@@ -52,7 +52,7 @@ const Menu = ({cat }) => {
 
         return (
           <div className="post" key={post.id}>
-            <img src={post.img} alt={`Post ${i}`} />
+            <img src={post.img} alt={`Post ${i}`} key={i} />
             <h2>{post.title}</h2>
             <button>Read More</button>
           </div>

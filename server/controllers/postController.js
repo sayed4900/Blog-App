@@ -4,12 +4,22 @@ const {promisify} = require('util')
 
 exports.addPost = async(req,res)=>{
   try{
-    const {title, content, user_id, cat, img} = req.body;
+    // const token = req.cookies?.access_token;
+    
+    // if (!token)
+    //   return res.status(401).json({status:"fail", message:"Not Authentcaited"});
+    
+    // const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
+    // const user_id = userInfo.id;
+    const user_id = 13;
+
+    const {title, content, cat, img} = req.body;
     
     const insertQuery = 
-    `INSERT INTO posts (title, content, user_id, cat, img) VALUES (?, ?, ?, ?, ?)`;
+    `INSERT INTO posts (title, content, cat, img, user_id) VALUES (?, ?, ?, ?, ?)`;
 
-    await pool.execute(insertQuery,[title,content,user_id,cat,img]);
+    const result = await pool.execute(insertQuery,[title,content,cat,img,user_id]);
+    console.log(result);
     res.status(201).json({status:"success"});
   }catch(err){
     console.log(err,'💥');
@@ -84,16 +94,24 @@ exports.deletePost=async(req,res)=>{
 }
 exports.updatePost=async(req,res)=>{
   try{
+    const token = req.cookies?.access_token;
+    
+    if (!token)
+      return res.status(401).json({status:"fail", message:"Not Authentcaited"});
+    
+    const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
+    
+
     const {title, content, cat, img} = req.body;
 
     const q = `UPDATE posts 
     SET title=?, content = ? , cat = ?, img = ?
-    WHERE post_id = ?`
-    const result = await pool.execute(q,[title, content, cat, img, req.params.id]) ; 
+    WHERE post_id = ? and user_id = ?`
+    const result = await pool.execute(q,[title, content, cat, img, req.params.id,userInfo.id]) ; 
     console.log(result);
     if(!result[0].affectedRows)
-      return res.status(401).json({status:"fail",message:"?"})
-    res.status(200).json({status:"success",result})
+      return res.status(500).json({status:"fail",message:"there are a problem, try again later"})
+    res.status(200).json({status:"success",message:"Post has been updated!"})
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)

@@ -42,7 +42,8 @@ const SinglePost = () => {
   return (
     <div className='single'>
       <div className="content">
-        <img src={post?.img}/>
+        {/* <img src={`../../../server/public/uploads/${post?.img}`}/> */}
+        <img src={`../../../server/public/uploads/1691992714711Screenshot_4.png`}/>
       
         <div className="user">
           <img src={post?.user_img}/>
@@ -53,7 +54,7 @@ const SinglePost = () => {
           {currentUser?.user_id==post?.user_id
           &&
           <div className="edit">
-            <Link to={'/write?edit=2'}>
+            <Link to={`/write?edit=${post.post_id}`} state={post}>
               <img src={Edit}/>
             </Link>
             <img src={Delete} onClick={deletePost}/>

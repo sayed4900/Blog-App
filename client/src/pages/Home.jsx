@@ -3,6 +3,7 @@ import {baseUrl} from '../utils/service';
 import { Link, useLocation } from 'react-router-dom'
 import axios from 'axios';
 
+
 // const posts = [
 //     {
 //       id: 1,
@@ -55,7 +56,7 @@ const Home = () => {
         {posts.map(post=>(
           <div className='post' key={post.post_id}>
             <div className='img'>
-              <img src={post.img} alt="" />
+              <img src={`../../../server/public/uploads/${post?.img}`} alt="" />
             </div>
             <div className="content">
               <Link to={`/post/${post.post_id}`}>
