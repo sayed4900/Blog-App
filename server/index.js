@@ -8,9 +8,12 @@ const userRoutes = require('./routes/userRoutes');
 const authRoutes = require('./routes/authRoutes');
 const postRoutes = require('./routes/postRoutes');
 
+
+app.use(cors({ origin: '*', credentials: true }));
 app.use(cookieParser())
 app.use(express.json());
-app.use(cors())
+// app.use(cors({origin:"*"}))
+
 app.use('/auth',authRoutes);
 app.use('/users',userRoutes);
 app.use('/posts',postRoutes);

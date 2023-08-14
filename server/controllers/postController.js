@@ -84,10 +84,18 @@ exports.deletePost=async(req,res)=>{
 }
 exports.updatePost=async(req,res)=>{
   try{
-    res.status(200).json("Con")
+    const {title, content, cat, img} = req.body;
+
+    const q = `UPDATE posts 
+    SET title=?, content = ? , cat = ?, img = ?
+    WHERE post_id = ?`
+    const result = await pool.execute(q,[title, content, cat, img, req.params.id]) ; 
+    console.log(result);
+    if(!result[0].affectedRows)
+      return res.status(401).json({status:"fail",message:"?"})
+    res.status(200).json({status:"success",result})
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)
   }
 }
- 

@@ -22,8 +22,8 @@ const Login = () => {
     e.preventDefault();
     login(inputs);
     try{
-      const res = await axios.post(`${baseUrl}/auth/login`,inputs);
-      console.log(`➡️   ${res.data}`);
+      const res = await axios.post(`${baseUrl}/auth/login`,inputs,{withCredentials:true});
+      // console.log(`➡️   ${res.data}`);
       if (res.data.status === "success"){
         navigate('/')
       }

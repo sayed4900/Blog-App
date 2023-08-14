@@ -50,7 +50,7 @@ const SinglePost = () => {
             <span>{post?.username}</span>
             <p>Posted {moment(post?.post_created_at).fromNow()}</p>
           </div>
-          {/* {currentUser?.user_id==post?.user_id */}
+          {currentUser?.user_id==post?.user_id
           &&
           <div className="edit">
             <Link to={'/write?edit=2'}>
@@ -58,12 +58,12 @@ const SinglePost = () => {
             </Link>
             <img src={Delete} onClick={deletePost}/>
           </div>
-        {/* } */}
+        }
         </div>
         <h1>{post?.title}</h1>
         {post?.content}
       </div>
-      <Menu/>
+      <Menu cat={post?.cat}/>
     </div>
   )
 }
