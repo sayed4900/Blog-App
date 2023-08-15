@@ -9,12 +9,16 @@ const authRoutes = require('./routes/authRoutes');
 const postRoutes = require('./routes/postRoutes');
 
 
+// Configure CORS to allow the specific origin and credentials
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true // This enables sending cookies and other credentials
+}));
 
-app.use(cors({ origin: 'http://127.0.0.1:5173', credentials: true }));
 app.use(cookieParser())
+
 app.use(express.json());
-// app.use( express.static( path.join( __dirname, './public' ) ) )
-// app.use(cors({origin:"*"}))
+
 
 app.use('/auth',authRoutes);
 app.use('/users',userRoutes);

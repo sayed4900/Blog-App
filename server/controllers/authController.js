@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 
 
 exports.register = async(req,res)=>{
-  const d_img="https://www.appexpertin.com/wp-content/uploads/2020/06/main-banner-img.jpg";
+  const d_img="default-user.png";
   try{
     // CHECK exist user
     const q = "SELECT * FROM users WHERE email = ? OR username = ?"
@@ -18,7 +18,7 @@ exports.register = async(req,res)=>{
     const hash = await bcrypt.hash(req.body.password,salt);
 
     const q2 = "INSERT INTO users(`username`,`email`, `password`, `img`) VALUES (?, ?, ?, ?)";
-    const values = [req.body.username, req.body.email, hash,d_img ] ;
+    const values = [req.body.username, req.body.email, hash, d_img ] ;
 
     await pool.execute(q2, values);
 
@@ -54,6 +54,10 @@ exports.login=async(req,res)=>{
     
     
     const {password, ...other} = user[0];
+    // res.writeHead(200, {
+    //   "Set-Cookie": `access_token=${token}`,
+    //   "Content-Type": `text/plain`
+    // });
     res.cookie("access_token", token,{httpOnly:false});
 
     res.status(200).json({status:"success",user:other})
@@ -66,6 +70,8 @@ exports.login=async(req,res)=>{
 
 exports.logout=async(req,res)=>{
   try{
+    console.log(req.cookies)
+    console.log(req.cookies?.access_token)
     res.clearCookie("access_token",{
       sameSite:"none",
       secure:true

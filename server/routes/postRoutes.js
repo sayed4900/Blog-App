@@ -8,10 +8,12 @@ router.get("/:id",postConroller.getPost);
 router.post('/add-post',postConroller.addPost);
 router.delete('/:id',postConroller.deletePost)
 router.put('/:id',postConroller.updatePost)
+router.get('/get-img/:imageName',postConroller.getImg)
+
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb){
-    cb(null,'../server/public/uploads')
+    cb(null,'../client/public/uploads')
   },
   filename:function(req,file,cb){
     cb(null, Date.now()+file.originalname)
@@ -19,6 +21,7 @@ const storage = multer.diskStorage({
 })
 
 const upload = multer({storage})
+
 router.post('/upload', upload.single('file'), function(req,res){
   const file = req.file;
   res.status(200).json({status:"success",filename:file.filename})

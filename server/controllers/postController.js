@@ -4,15 +4,14 @@ const {promisify} = require('util')
 
 exports.addPost = async(req,res)=>{
   try{
-    // const token = req.cookies?.access_token;
+    const token = req.cookies?.access_token;
     
-    // if (!token)
-    //   return res.status(401).json({status:"fail", message:"Not Authentcaited"});
+    if (!token)
+      return res.status(401).json({status:"fail", message:"Not Authentcaited"});
     
-    // const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
-    // const user_id = userInfo.id;
-    const user_id = 13;
-
+    const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
+    const user_id = userInfo.id;
+  
     const {title, content, cat, img} = req.body;
     
     const insertQuery = 
@@ -72,9 +71,10 @@ exports.getAllPosts = async(req,res)=>{
 
 exports.deletePost=async(req,res)=>{
   try{ 
-    
+      
+    console.log(req.cookies) ;
     const token = req.cookies?.access_token;
-    // console.log(`token➡️ ${token}`);
+    console.log(`token➡️ ${token}`);
     if (!token)
       return res.status(401).json({status:"fail", message:"Not Authentcaited"});
     
@@ -115,5 +115,19 @@ exports.updatePost=async(req,res)=>{
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)
+  }
+}
+
+exports.getImg=async(req,res)=>{
+  try{
+     // Assuming the image filename is passed as a parameter
+    const imageName = req.params.imageName;
+    
+     // Construct the URL for the image using the 'images' route
+    const imageUrl = `../public/uploads/${imageName}`;
+    
+    res.status(200).json({ status: 'success', imageUrl });
+  }catch(err){
+    console.log(err);
   }
 }

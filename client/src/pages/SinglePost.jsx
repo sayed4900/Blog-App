@@ -7,6 +7,7 @@ import axios from 'axios'
 import moment from 'moment'
 import {AuthContext} from '../context/AuthContext'
 import {baseUrl} from '../utils/service'
+import DOMPurify from 'dompurify'
 
 const SinglePost = () => {
 
@@ -36,17 +37,24 @@ const SinglePost = () => {
         console.log(err);
       }
     }
+    const getImage = async()=>{
+      try{
+        const res = await axios.get(`${baseUrl}/posts/get-img/${post?.img}`);
+        ccon
+      }catch(err){
+        console.log(err)
+      }
+    }
     getPost();
   },[post_id])
 
   return (
     <div className='single'>
       <div className="content">
-        {/* <img src={`../../../server/public/uploads/${post?.img}`}/> */}
-        <img src={`../../../server/public/uploads/1691992714711Screenshot_4.png`}/>
-      
+        <img src={`../../public/uploads/${post?.img}`}/>
+        
         <div className="user">
-          <img src={post?.user_img}/>
+          <img src={`../../public/uploads/${post?.user_img}`}/>
           <div className="info">
             <span>{post?.username}</span>
             <p>Posted {moment(post?.post_created_at).fromNow()}</p>
@@ -62,7 +70,11 @@ const SinglePost = () => {
         }
         </div>
         <h1>{post?.title}</h1>
-        {post?.content}
+        <p
+          dangerouslySetInnerHTML={{
+            __html: DOMPurify.sanitize(post.content),
+          }}
+        ></p> 
       </div>
       <Menu cat={post?.cat}/>
     </div>

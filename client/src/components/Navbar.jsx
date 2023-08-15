@@ -2,12 +2,14 @@ import React, { useContext } from 'react'
 import logo from '../imges/blog-logo.png'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
+
 const Navbar = () => {
   const {currentUser, logout} = useContext(AuthContext);
   console.log(currentUser)
   return (
     <div className='navbar'>
       <div className="container">
+      
         <div className="logo">
           <Link to="/">
             <img src={logo} className='logo' />

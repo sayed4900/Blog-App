@@ -4,7 +4,7 @@ import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axois from 'axios'
 import { baseUrl } from '../utils/service';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const Write = () => {
   const state = useLocation().state
@@ -14,6 +14,8 @@ const Write = () => {
   const [file, setFile] = useState(null)
   const [cat, setCat] = useState(state?.cat||"")
 
+  const navigate = useNavigate();
+  
   const upload = async()=>{
     try{
       const formData = new FormData();
@@ -29,15 +31,15 @@ const Write = () => {
   const handleSubmit = async(e)=>{
     e.preventDefault();
     const imgUrl = await upload();
-    console.log(imgUrl)
+    // console.log(imgUrl)
     try{
-      // if (state){
-      //   const res = await axois.put(`${baseUrl}/posts/upload/${state.post_id}`,{title,content:value,cat,img: file ? imgUrl:""})
-      //   console.log(res.data);
-      // }else{
-        const res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat, img:imgUrl})
+      if (state){
+        const res = await axois.put(`${baseUrl}/posts/upload/${state.post_id}`,{title,content:value,cat,img: file ? imgUrl:""})
         console.log(res.data);
-      // }
+      }else{
+        const res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat, img:imgUrl})
+        navigate('/')
+      }
     }catch(err){
       console.log(err)
     }
