@@ -6,6 +6,7 @@ import Register from './pages/Register'
 import  Login  from './pages/Login'
 import  Write  from './pages/Write'
 import  SinglePost  from './pages/SinglePost'
+import  User  from './pages/User'
 import  Home  from './pages/Home'
 import './style.sass'
 
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path:"/write",
         element:<Write/>
+      },
+      {
+        path:"/user/:id",
+        element:<User/>
       }
     ]
   },

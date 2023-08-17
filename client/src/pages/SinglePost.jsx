@@ -53,11 +53,15 @@ const SinglePost = () => {
     <div className='single'>
       <div className="content">
         <img src={`../../public/uploads/${post?.img}`}/>
-        
+
         <div className="user">
+        <Link to={`/user/${post?.user_id}`}  >
           <img src={`../../public/uploads/${post?.user_img}`}/>
+        </Link>
           <div className="info">
-            <span>{post?.username}</span>
+            <Link to={`/user/${post?.user_id}`} state={post?.user_id} >
+              <span>{post?.username}</span>
+            </Link>
             <p>Posted {moment(post?.post_created_at).fromNow()}</p>
           </div>
           {currentUser?.user_id==post?.user_id

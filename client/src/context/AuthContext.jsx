@@ -12,7 +12,8 @@ export  const AuthContextProvider = ({children})=>{
     setCurrentUser(res.data.user);
   }
   const logout = async(inputs)=>{
-    const res = await axios.post(`${baseUrl}/auth/logout`);
+    localStorage.removeItem("token")
+    // const res = await axios.post(`${baseUrl}/auth/logout`);
     setCurrentUser(null);
   }
 
