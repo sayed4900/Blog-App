@@ -8,7 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 const Write = () => {
   const state = useLocation().state
-  
+  const token = localStorage.getItem("token")
+
   const [value, setValue] = useState(state?.content||"");
   const [title, setTitle] = useState(state?.title||"");
   const [file, setFile] = useState(null)
@@ -20,7 +21,7 @@ const Write = () => {
     try{
       const formData = new FormData();
       formData.append("file",file) ; 
-      const res = await axois.post(`${baseUrl}/posts/upload`,formData);
+      const res = await axois.post(`${baseUrl}/posts/uploads`,formData);
       console.log(res)
       return res.data.filename;
     }catch(err){
@@ -30,14 +31,21 @@ const Write = () => {
 
   const handleSubmit = async(e)=>{
     e.preventDefault();
-    const imgUrl = await upload();
-    // console.log(imgUrl)
+    let imgUrl="";
+    if (file)
+      imgUrl = await upload();
+    console.log(imgUrl)
+    console.log(file)
     try{
+      console.log(state)
       if (state){
-        const res = await axois.put(`${baseUrl}/posts/upload/${state.post_id}`,{title,content:value,cat,img: file ? imgUrl:""})
-        console.log(res.data);
+        const res = await axois.put(`${baseUrl}/posts/${state.post_id}`,{title,content:value,cat, img: file ? imgUrl : state.img ,token})
+        
+        navigate('/')
       }else{
-        const res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat, img:imgUrl})
+        const res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat,  img: file ? imgUrl : "", token})
+        console.log(`imgUrl: ${imgUrl}`)
+        console.log(res);
         navigate('/')
       }
     }catch(err){

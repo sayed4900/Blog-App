@@ -1,17 +1,20 @@
 const  jwt  = require('jsonwebtoken');
 const pool = require('../utils/db.js');
 const {promisify} = require('util')
+const multer = require('multer');
+
 
 exports.addPost = async(req,res)=>{
   try{
-    const token = req.cookies?.access_token;
+    console.log(req.body);
+    const token = req.body.token;
     
     if (!token)
-      return res.status(401).json({status:"fail", message:"Not Authentcaited"});
+      return res.status(401).json({status:"fail", message:"Not Authentcaited1"});
     
     const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
     const user_id = userInfo.id;
-  
+    console.log(user_id);
     const {title, content, cat, img} = req.body;
     
     const insertQuery = 
@@ -46,7 +49,7 @@ exports.getAllPosts = async(req,res)=>{
     const params =[];
     const cat = req.query.cat; // Get the 'cat' query parameter from the request
 
-    let q = "SELECT * FROM posts"; // Default query
+    let q = "SELECT * FROM posts ORDER BY created_at DESC"; // Default query
     
     // If 'cat' parameter is provided, modify the query
     if (cat) {
@@ -69,14 +72,13 @@ exports.getAllPosts = async(req,res)=>{
   }
 }
 
-exports.deletePost=async(req,res)=>{
+exports.deletePost = async(req,res)=>{
   try{ 
-      
-    console.log(req.cookies) ;
-    const token = req.cookies?.access_token;
-    console.log(`token➡️ ${token}`);
+
+    const token = req.body.token;
+   
     if (!token)
-      return res.status(401).json({status:"fail", message:"Not Authentcaited"});
+      return res.status(401).json({status:"fail", message:"Not Authentcaited2"});
     
     const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
     console.log(userInfo.id);
@@ -94,8 +96,8 @@ exports.deletePost=async(req,res)=>{
 }
 exports.updatePost=async(req,res)=>{
   try{
-    const token = req.cookies?.access_token;
-    
+    console.log(req.body);
+    const token = req.body.token;
     if (!token)
       return res.status(401).json({status:"fail", message:"Not Authentcaited"});
     
@@ -130,4 +132,32 @@ exports.getImg=async(req,res)=>{
   }catch(err){
     console.log(err);
   }
+}
+
+
+const storage = multer.diskStorage({
+  destination: function (req, file, cb){
+    cb(null,'../client/public/uploads')
+  },
+  filename:function(req,file,cb){
+    cb(null, Date.now()+file.originalname)
+  }
+})
+
+const upload = multer({storage})
+
+exports.handleFileUpload=(req, res)=> {
+  upload.single('file')(req, res, function (err) {
+    if (err instanceof multer.MulterError) {
+      // A Multer error occurred when uploading.
+      return res.status(400).json({ status: 'error', message: err.message });
+    } else if (err) {
+      // An unknown error occurred.
+      return res.status(500).json({ status: 'error', message: 'File upload failed.' });
+    }
+
+    // File upload was successful.
+    const file = req.file;
+    res.status(200).json({ status: 'success', filename: file.filename });
+  });
 }

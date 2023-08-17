@@ -10,7 +10,8 @@ import {baseUrl} from '../utils/service'
 import DOMPurify from 'dompurify'
 
 const SinglePost = () => {
-
+  const token = localStorage.getItem("token");
+  console.log(token)
   const {currentUser} = useContext(AuthContext);
   console.log(currentUser );
   const [post, setPost] = useState({});
@@ -21,7 +22,7 @@ const SinglePost = () => {
   const post_id = location.pathname.split('/')[2];
   
   const deletePost = async()=>{
-    const res = await axios.delete(`${baseUrl}/posts/${post.post_id}`);
+    const res = await axios.post(`${baseUrl}/posts/${post.post_id}`,{token});
     console.log(res)
     navigate("/");
   }

@@ -60,7 +60,7 @@ exports.login=async(req,res)=>{
     // });
     res.cookie("access_token", token,{httpOnly:false});
 
-    res.status(200).json({status:"success",user:other})
+    res.status(200).json({status:"success",user:other,token})
 
   }catch(err){
     console.log(err);

@@ -24,6 +24,8 @@ const Login = () => {
     try{
       const res = await axios.post(`${baseUrl}/auth/login`,inputs,{ withCredentials: true });
       // console.log(`➡️   ${res.data}`);
+      localStorage.setItem("token", res.data.token);
+
       if (res.data.status === "success"){
         navigate('/')
       }
