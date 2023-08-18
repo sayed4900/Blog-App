@@ -41,8 +41,25 @@ CREATE TABLE followers (
   FOREIGN KEY (following_user_id) REFERENCES users (user_id)
 )
 
-
--- CREATE TABEL categories(
+CREATE TABLE notifications(
+  notification_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT NOT NULL,
+  post_id INT NOT NULL,
+  message TEXT NOT NULL,
+  FOREIGN KEY (user_id) REFERENCES users (user_id),
+  FOREIGN KEY (post_id) REFERENCES posts (post_id)
+);
+CREATE TABLE notifications(
+  notification_id INT AUTO_INCREMENT PRIMARY KEY,
+  sender INT NOT NULL,
+  recivier INT NOT NULL,
+  post_id INT NOT NULL,
+  message TEXT NOT NULL,
+  FOREIGN KEY (sender) REFERENCES users (user_id),
+  FOREIGN KEY (recivier) REFERENCES users (user_id),
+  FOREIGN KEY (post_id) REFERENCES posts (post_id)
+);
+-- CREATE TABLE categories(
 --   category_id INT NOT NULL PRIMARY KEY,
 --   name VARCHAR(100) NOT NULL,
 --   description VARCHAR(100) 

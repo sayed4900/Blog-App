@@ -40,10 +40,12 @@ const Navbar = () => {
           <span className='write'>
             <Link className='link' to='/write'>Write</Link>
           </span>
+          {currentUser &&
           <span className='bell-icon'>
             <img src={bell} alt="Your SVG" />
-            <span className="notification-dot"></span>
-        </span>
+            {/* <span className="notification-dot"></span> */}
+          </span>
+          }
         </div>
       </div>
     </div>

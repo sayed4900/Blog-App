@@ -18,6 +18,8 @@ const User = () => {
   const [isFollowing, setIsFollowing] = useState(false);
   const [userFollowers, setUserFollower] = useState(0);
   const [userFollowing, setUserFollowing] = useState(0);
+  
+  
   useEffect(()=>{
     const getUserData = async()=>{
       try{
@@ -67,16 +69,19 @@ const User = () => {
       const res = await axios.post(`${baseUrl}/users/follow`,
       {follower_user_id:currentUser.user_id,following_user_id:params.id});
       console.log(res.data);
+      setUserFollower(prev=> prev+1)
     }catch(err){
       console.log(err)
     }
   }
   const unfollow = async()=>{
     try{
-
+      
       const res = await axios.post(`${baseUrl}/users/unfollow`,
       {follower_user_id:currentUser.user_id,following_user_id:params.id});
       console.log(res.data);
+      setUserFollower(prev=> prev-1)
+      
     }catch(err){
       console.log(err);
     }
@@ -108,7 +113,7 @@ const User = () => {
         ) : null}
       </div>
       <div className='user-stats'>
-        <p>Followers : <strong>{userFollowers}</strong></p>
+        <p>Followers : <strong>{userFollowers} </strong></p>
         <p>Following : <strong>{userFollowing}</strong> </p>
         <h3></h3>
       </div>

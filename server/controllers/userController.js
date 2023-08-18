@@ -129,4 +129,3 @@ exports.getUserFollowing = async(req,res)=>{
     res.status(500).json({status:"fail",err})
   }
 }
-
