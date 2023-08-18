@@ -16,7 +16,8 @@ const User = () => {
   const {currentUser}  = useContext(AuthContext);
   const [userData, setUserData] = useState({});
   const [isFollowing, setIsFollowing] = useState(false);
- 
+  const [userFollowers, setUserFollower] = useState(0);
+  const [userFollowing, setUserFollowing] = useState(0);
   useEffect(()=>{
     const getUserData = async()=>{
       try{
@@ -29,39 +30,86 @@ const User = () => {
       }
     }
     const checkFollowingStatus = async ()=>{
-      const res = await axios.post(`${baseUrl}/users/check-follow-status`,{follower_user_id:params.id,following_user_id:currentUser.user_id});
+      const res = await axios.post(`${baseUrl}/users/check-follow-status`,{follower_user_id:currentUser.user_id,following_user_id:params.id});
+      
       console.log(res.data);
       setIsFollowing(res.data.isFollowing);
     }
+    const getUserFollowers = async ()=>{
+      try{
+
+        const res = await axios.get(`${baseUrl}/users/get-user-followers/${params.id}`)  
+        console.log(res.data);
+        setUserFollower(res.data.numberOfFollowers)
+      }catch(err){
+        console.log(err);
+      }
+      
+    }
+    const getUserFollowing = async ()=>{
+      try{
+        const res = await axios.get(`${baseUrl}/users/get-user-following/${params.id}`)  
+        setUserFollowing(res.data.numberOfFollowing)
+      }catch(err){
+        console.log(err)
+      }
+    
+    }
+    
     getUserData();
     checkFollowingStatus();
+    getUserFollowers();
+    getUserFollowing();
   },[])
 
   const follow = async()=>{
     try{
-      await axios.post(`${baseUrl}/users/follow`,{follower_user_id:params.id,following_user_id:currentUser.user_id})
+      const res = await axios.post(`${baseUrl}/users/follow`,
+      {follower_user_id:currentUser.user_id,following_user_id:params.id});
+      console.log(res.data);
     }catch(err){
       console.log(err)
     }
   }
   const unfollow = async()=>{
-    await axios.post(`${baseUrl}/users/unfollow`,{follower_user_id:params.id,following_user_id:currentUser.user_id})
+    try{
+
+      const res = await axios.post(`${baseUrl}/users/unfollow`,
+      {follower_user_id:currentUser.user_id,following_user_id:params.id});
+      console.log(res.data);
+    }catch(err){
+      console.log(err);
+    }
   }
   
+  const handleToggleFollow = async() => {
+    // Toggle the follow status and update the state
+    setIsFollowing(prevIsFollowing => !prevIsFollowing);
+
+    if (!isFollowing)
+      follow() ;
+    else
+      unfollow();
+  };
 
   const getText = (html)=>{
     const doc = new DOMParser().parseFromString(html,"text/html");
     return doc.body.textContent
   }
   return (
-    <div>
-      <div>
-        <h3>{userData.username}</h3>
-        {currentUser.user_id!==params.id &&
-          isFollowing ? <button>unfollow</button>:<button>Follow</button>
-        }
-        <p>followers : 12</p>
-        <p>following : 150</p>
+    <div className='user-profile'>
+      <div className='user-info'>
+        <h3>username: {userData.username}</h3>
+        {/* Toggle Follow/Unfollow button */}
+        {currentUser.user_id !== params.id ? (
+          <button onClick={handleToggleFollow}>
+            {isFollowing ? 'Unfollow' : 'Follow'}
+          </button>
+        ) : null}
+      </div>
+      <div className='user-stats'>
+        <p>Followers : <strong>{userFollowers}</strong></p>
+        <p>Following : <strong>{userFollowing}</strong> </p>
         <h3></h3>
       </div>
       <div className='posts'>

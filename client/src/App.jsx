@@ -8,7 +8,8 @@ import  Write  from './pages/Write'
 import  SinglePost  from './pages/SinglePost'
 import  User  from './pages/User'
 import  Home  from './pages/Home'
-import './style.sass'
+// import './style.sass'
+import './style.css'
 
 const Layout = () =>{
   return (

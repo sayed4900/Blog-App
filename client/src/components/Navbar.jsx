@@ -2,6 +2,7 @@ import React, { useContext } from 'react'
 import logo from '../imges/blog-logo.png'
 import { Link } from 'react-router-dom'
 import { AuthContext } from '../context/AuthContext'
+import bell from '../assets/bell.svg'
 
 const Navbar = () => {
   const {currentUser, logout} = useContext(AuthContext);
@@ -35,10 +36,14 @@ const Navbar = () => {
             <h6>FOOD</h6>
           </Link>
           <span>{currentUser?.username}</span>
-         {currentUser? <span onClick={logout}>logout</span> : <Link to="/login">Login</Link>}
+          {currentUser? <span onClick={logout}>logout</span> : <Link to="/login">Login</Link>}
           <span className='write'>
             <Link className='link' to='/write'>Write</Link>
           </span>
+          <span className='bell-icon'>
+            <img src={bell} alt="Your SVG" />
+            <span className="notification-dot"></span>
+        </span>
         </div>
       </div>
     </div>
