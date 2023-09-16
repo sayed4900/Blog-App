@@ -22,7 +22,7 @@ const Login = () => {
     e.preventDefault();
     login(inputs);
     try{
-      const res = await axios.post(`${baseUrl}/auth/login`,inputs,{ withCredentials: true });
+      const res = await axios.post(`${baseUrl}/auth/login`,inputs);
       // console.log(`➡️   ${res.data}`);
       localStorage.setItem("token", res.data.token);
 

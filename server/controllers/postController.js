@@ -2,11 +2,13 @@ const  jwt  = require('jsonwebtoken');
 const pool = require('../utils/db.js');
 const {promisify} = require('util')
 const multer = require('multer');
+const socketIO = require('socket.io');
 
 
+const { createNotification } = require('./notificationController.js'); // Import your notification 
 exports.addPost = async(req,res)=>{
   try{
-    console.log(req.body);
+    
     const token = req.body.token;
     
     if (!token)
@@ -14,15 +16,36 @@ exports.addPost = async(req,res)=>{
     
     const userInfo =  await promisify(jwt.verify)(token,"SECERT") ;
     const user_id = userInfo.id;
-    console.log(user_id);
+    
     const {title, content, cat, img} = req.body;
     
     const insertQuery = 
     `INSERT INTO posts (title, content, cat, img, user_id) VALUES (?, ?, ?, ?, ?)`;
 
-    const result = await pool.execute(insertQuery,[title,content,cat,img,user_id]);
+    const [result] = await pool.execute(insertQuery,[title,content,cat,img,user_id]);
     console.log(result);
-    res.status(201).json({status:"success"});
+    // Notify user's followers
+    const getFollowersQuery = `
+      SELECT follower_user_id
+      FROM followers
+      WHERE following_user_id = ?;
+    `;
+    const [followersResult] = await pool.execute(getFollowersQuery, [user_id]);
+    console.log('⬆️',followersResult);
+    for (const follower of followersResult) {
+      console.log(follower);
+      console.log(follower.follower_user_id)
+      console.log(result.insertId)
+      await createNotification(
+        user_id,
+        follower.follower_user_id,
+        result.insertId, // Assuming result.insertId is the new post's ID
+      );
+    
+    }
+    
+
+    res.status(201).json({status:"success", user_id, post_id:result.insertId , followers:followersResult});
   }catch(err){
     console.log(err,'💥');
     res.status(500).json(err)

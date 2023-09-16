@@ -102,13 +102,13 @@ exports.getUserFollowers = async(req,res)=>{
       WHERE f.following_user_id = ?
     `
     const [result] = await pool.execute(q,[req.params.id])
-    res.status(200).json({status:"success",numberOfFollowers:result.length,result})
+    res.status(200).json({status:"success",numberOfFollowers:result.length,followers:result})
   }catch(err){
     console.log(err);
-    res.status(500).json({status:"fail",err})
-
+    res.status(500).json({status:"fail",err});
   }
 }
+
 exports.getUserFollowing = async(req,res)=>{
   try{
   

@@ -32,12 +32,12 @@ const Home = () => {
     <div className='home'>
   
       <div className="posts">
-        {posts.map(post=>(
-          <>
-              {/* write condition here that if (!post.post_id) continue because of there is nore post.post_id, there is no data to show it*/}
-            {post.post_id ? (
-              <div className='post' key={post.post_id}>
-                <div className='img'>
+      <div className="posts">
+        {posts
+            .filter((post) => post.post_id) // Filter out posts with no post_id
+            .map((post) => (
+              <div className="post" key={post.post_id}>
+                <div className="img">
                   <img src={`../../public/uploads/${post?.img}`} alt="" />
                 </div>
                 <div className="content">
@@ -45,13 +45,14 @@ const Home = () => {
                     <h1>{post.title}</h1>
                   </Link>
                   <p>{getText(post.content)}</p>
-                  <button><Link to={`/post/${post.post_id}`}>Read More</Link></button>
+                  <button>
+                    <Link to={`/post/${post.post_id}`}>Read More</Link>
+                  </button>
                 </div>
-              </div> 
-              ) : null}
-            </>
-          )
-        )}
+              </div>
+            ))}
+        </div>
+
       </div>
     </div>
   )

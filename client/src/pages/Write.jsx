@@ -1,12 +1,15 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
 import axois from 'axios'
 import { baseUrl } from '../utils/service';
 import { useLocation, useNavigate } from 'react-router-dom';
 import axios from 'axios';
-const Write = () => {
+ 
+
+const Write = ({socket}) => {
+
   const state = useLocation().state
   const token = localStorage.getItem("token")
 
@@ -14,9 +17,24 @@ const Write = () => {
   const [title, setTitle] = useState(state?.title||"");
   const [file, setFile] = useState(null)
   const [cat, setCat] = useState(state?.cat||"")
+   
+
 
   const navigate = useNavigate();
   
+  useEffect(() => {
+    
+    console.log(socket)
+    
+    
+ 
+
+    // Clean up the WebSocket connection on component unmount
+    return () => {
+      
+    };
+  }, []);
+
   const upload = async()=>{
     try{
       const formData = new FormData();
@@ -34,19 +52,38 @@ const Write = () => {
     let imgUrl="";
     if (file)
       imgUrl = await upload();
+
     console.log(imgUrl)
     console.log(file)
+
     try{
       console.log(state)
+      let res ;
       if (state){
-        const res = await axois.put(`${baseUrl}/posts/${state.post_id}`,{title,content:value,cat, img: file ? imgUrl : state.img ,token})
+        res = await axois.put(`${baseUrl}/posts/${state.post_id}`,{title,content:value,cat, img: file ? imgUrl : state.img ,token})
         
         navigate('/')
       }else{
-        const res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat,  img: file ? imgUrl : "", token})
+        res = await axios.post(`${baseUrl}/posts/add-post`,{title, content:value, cat,  img: file ? imgUrl : "", token})
         console.log(`imgUrl: ${imgUrl}`)
         console.log(res);
+      }
+      console.log(res)
+      if (res.data.status==="success"){
+        if (socket) {
+
+          const {user_id, post_id, followers} = res.data;
+          console.log(res.data)
+          
+          console.log(user_id, post_id , followers); // every thing work well
+          socket.emit('newPost', { user_id, post_id, followers });
+        }
         navigate('/')
+        
+      }
+      else{
+        // show popup to tell the user there is an error
+        console.log("PROBLEM ")
       }
     }catch(err){
       console.log(err)
