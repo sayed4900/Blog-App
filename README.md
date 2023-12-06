@@ -31,3 +31,6 @@
 - Users receive notifications when others create new blog posts (Only if they follow the user who created the post).
 
 - Users can view a list of notifications.
+
+  ## Demo
+  [Link](https://www.youtube.com/watch?v=iGVO8gnC-M8)
